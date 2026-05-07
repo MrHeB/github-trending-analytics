@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { FetchTrendingButton } from "@/components/FetchTrendingButton";
 import { HistorySidebar } from "@/components/HistorySidebar";
 import { ReportViewer } from "@/components/ReportViewer";
+import { PasswordDialog } from "@/components/PasswordDialog";
+import { Button } from "@/components/ui/button";
 import type { DailyReport, ReportDate, TrendingCategory } from "@/types";
 
 interface HomeContentProps {
@@ -20,6 +22,7 @@ export function HomeContent({ dates, defaultReport }: HomeContentProps) {
   );
   const [report, setReport] = useState<DailyReport | null>(defaultReport);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSelect = async (date: string, category: TrendingCategory) => {
     setSelectedDate(date);
@@ -34,6 +37,11 @@ export function HomeContent({ dates, defaultReport }: HomeContentProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/login";
   };
 
   useEffect(() => {
@@ -52,13 +60,24 @@ export function HomeContent({ dates, defaultReport }: HomeContentProps) {
         selectedCategory={selectedCategory}
         onSelect={handleSelect}
       />
-      <main className="flex-1 overflow-y-auto px-6 py-8">
-        {loading ? (
-          <div className="text-center py-20 text-muted-foreground">加载中...</div>
-        ) : (
-          <ReportViewer report={report} />
-        )}
-      </main>
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="shrink-0 px-6 py-2 flex items-center justify-end gap-2 border-b">
+          <Button variant="ghost" size="xs" onClick={() => setShowPassword(true)}>
+            修改密码
+          </Button>
+          <Button variant="ghost" size="xs" onClick={handleLogout}>
+            退出登录
+          </Button>
+        </div>
+        <main className="flex-1 overflow-y-auto px-6 py-8">
+          {loading ? (
+            <div className="text-center py-20 text-muted-foreground">加载中...</div>
+          ) : (
+            <ReportViewer report={report} />
+          )}
+        </main>
+      </div>
+      {showPassword && <PasswordDialog onClose={() => setShowPassword(false)} />}
     </div>
   );
 }
