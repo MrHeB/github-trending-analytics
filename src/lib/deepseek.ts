@@ -2,8 +2,8 @@ import OpenAI from "openai";
 
 function getClient() {
   return new OpenAI({
-    apiKey: process.env.DEEPSEEK_API_KEY || "dummy",
-    baseURL: "https://api.deepseek.com",
+    apiKey: process.env.GLM_API_KEY || "dummy",
+    baseURL: "https://open.bigmodel.cn/api/paas/v4",
   });
 }
 
@@ -60,7 +60,7 @@ ${info.readme ? `## README 内容摘要\n${info.readme.slice(0, 3000)}` : ""}
 > 本分析由 AI 自动生成，仅供参考`;
 
   const completion = await getClient().chat.completions.create({
-    model: "deepseek-chat",
+    model: "glm-4.7-flash",
     messages: [{ role: "user", content: prompt }],
     max_tokens: 2000,
     temperature: 0.7,

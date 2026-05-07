@@ -5,7 +5,7 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/github_trending
-      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - GLM_API_KEY=${GLM_API_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN:-}
       - HTTP_PROXY=${HTTP_PROXY:-}
       - HTTPS_PROXY=${HTTPS_PROXY:-}

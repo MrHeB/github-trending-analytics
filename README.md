@@ -1,11 +1,11 @@
 # GitHub Trending Analytics
 
-每日 GitHub 热门项目趋势分析平台。系统每天早上 8:00 自动抓取 GitHub 上 star 增长最快的前 10 个项目，通过 DeepSeek AI 生成深度分析报告，用户可在网页上浏览和查看。
+每日 GitHub 热门项目趋势分析平台。系统每天早上 8:00 自动抓取 GitHub 上 star 增长最快的前 10 个项目，通过智谱 GLM AI 生成深度分析报告，用户可在网页上浏览和查看。
 
 ## 功能特性
 
 - **自动抓取**：每天 08:00 自动获取 GitHub 趋势项目
-- **AI 分析**：DeepSeek 自动生成项目分析报告（概览、技术亮点、适用场景、上手建议）
+- **AI 分析**：智谱 GLM 自动生成项目分析报告（概览、技术亮点、适用场景、上手建议）
 - **Star 趋势图**：可视化展示项目 star 增长趋势
 - **Markdown 渲染**：分析报告以 Markdown 格式展示
 - **手动触发**：支持通过 API 手动触发抓取任务
@@ -15,7 +15,7 @@
 - Next.js 16 + React 19
 - Prisma 7 + PostgreSQL
 - Tailwind CSS v4 + shadcn/ui
-- DeepSeek API（AI 分析）
+- 智谱 GLM API（AI 分析）
 - node-cron（定时任务）
 - Docker Compose（一键部署）
 
@@ -25,7 +25,7 @@
 
 - 已安装 1Panel 面板的服务器
 - 服务器可以访问 GitHub（国内服务器可能需要配置代理）
-- 已获取 DeepSeek API Key（从 https://platform.deepseek.com 申请）
+- 已获取智谱 GLM API Key（从 https://open.bigmodel.cn 申请）
 
 ---
 
@@ -83,8 +83,8 @@ git clone https://github.com/MrHeB/github-trending-analytics.git
 # 数据库连接
 DATABASE_URL="postgresql://postgres:your_password@localhost:5432/github_trending?schema=public"
 
-# DeepSeek API
-DEEPSEEK_API_KEY="your_deepseek_api_key"
+# 智谱 GLM API（从 https://open.bigmodel.cn 申请）
+GLM_API_KEY="your_glm_api_key"
 
 # GitHub Token（可选，不填则有速率限制）
 GITHUB_TOKEN=""
