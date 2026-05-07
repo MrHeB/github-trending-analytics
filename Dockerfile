@@ -1,17 +1,18 @@
 FROM node:25-alpine AS base
+RUN npm install -g pnpm
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+RUN pnpm i --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate
-RUN corepack enable pnpm && pnpm build
+RUN pnpm build
 
 FROM base AS runner
 WORKDIR /app
