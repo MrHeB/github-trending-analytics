@@ -100,8 +100,8 @@ HTTPS_PROXY=""
 # 数据库连接 —— 把 your_password 改成你自己的密码（记住这个密码，后面要用）
 DATABASE_URL="postgresql://postgres:Abc123456!@db:5432/github_trending?schema=public"
 
-# DeepSeek API —— 填入你的 DeepSeek API Key
-DEEPSEEK_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+# 智谱 GLM API —— 填入你的智谱 API Key（从 https://open.bigmodel.cn 申请）
+GLM_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxx"
 
 # GitHub Token（可选，建议填写以提高 API 请求限额）
 # 去 https://github.com/settings/tokens 创建一个 Personal Access Token
@@ -147,7 +147,7 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/github_trending
-      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - GLM_API_KEY=${GLM_API_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN:-}
     depends_on:
       db:
@@ -262,7 +262,7 @@ curl -X POST http://localhost:3000/api/cron
 
 #### 3. 手动触发失败
 
-- 检查 `.env` 中 `DEEPSEEK_API_KEY` 是否正确
+- 检查 `.env` 中 `GLM_API_KEY` 是否正确
 - 检查服务器是否能访问 GitHub API：在终端执行 `curl -s https://api.github.com/rate_limit`
 - 如果无法访问 GitHub，需要配置代理：在 `.env` 中设置 `HTTP_PROXY` 和 `HTTPS_PROXY`
 
@@ -306,7 +306,7 @@ curl -X POST http://localhost:3000/api/cron
 | 变量名 | 必填 | 说明 |
 |--------|------|------|
 | `DATABASE_URL` | 是 | PostgreSQL 连接字符串 |
-| `DEEPSEEK_API_KEY` | 是 | DeepSeek API Key |
+| `GLM_API_KEY` | 是 | 智谱 GLM API Key（从 open.bigmodel.cn 申请） |
 | `GITHUB_TOKEN` | 否 | GitHub Token（提高 API 限额） |
 | `HTTP_PROXY` | 否 | HTTP 代理地址 |
 | `HTTPS_PROXY` | 否 | HTTPS 代理地址 |
