@@ -30,8 +30,14 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY --from=builder /app/scripts/migrate.js ./scripts/migrate.js
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/pg ./node_modules/pg
+COPY --from=builder /app/node_modules/pg-protocol ./node_modules/pg-protocol
+COPY --from=builder /app/node_modules/pg-connection-string ./node_modules/pg-connection-string
+COPY --from=builder /app/node_modules/buffer-writer ./node_modules/buffer-writer
+COPY --from=builder /app/node_modules/packet-reader ./node_modules/packet-reader
 
 RUN chmod +x docker-entrypoint.sh
 
