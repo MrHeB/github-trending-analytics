@@ -5,7 +5,8 @@ import Link from "next/link";
 import { MarkdownViewer } from "@/components/MarkdownViewer";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, ChevronRight, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronRight, ExternalLink, Copy, Check } from "lucide-react";
 import type { Project } from "@/types";
 
 function formatStars(n: number): string {
@@ -13,8 +14,26 @@ function formatStars(n: number): string {
   return n.toString();
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Button variant="ghost" size="xs" onClick={handleCopy}>
+      {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+      {copied ? "已复制" : "复制"}
+    </Button>
+  );
+}
+
 function ProjectItem({ project }: { project: Project }) {
   const [expanded, setExpanded] = useState(false);
+  const [wechatExpanded, setWechatExpanded] = useState(false);
 
   return (
     <article className="border rounded-lg overflow-hidden">
@@ -39,17 +58,15 @@ function ProjectItem({ project }: { project: Project }) {
         <span className="text-sm text-muted-foreground shrink-0">
           ⭐ {formatStars(project.stars)}
         </span>
+        <span className="text-sm text-muted-foreground shrink-0">
+          🍴 {formatStars(project.forks)}
+        </span>
         <Badge
           variant="outline"
           className="text-green-600 border-green-200 bg-green-50 shrink-0"
         >
           +{formatStars(project.starsGrowth)}
         </Badge>
-        {project.topics?.slice(0, 2).map((topic) => (
-          <Badge key={topic} variant="outline" className="text-xs shrink-0 hidden sm:inline-flex">
-            {topic}
-          </Badge>
-        ))}
       </button>
 
       {expanded && (
@@ -72,6 +89,31 @@ function ProjectItem({ project }: { project: Project }) {
             <MarkdownViewer content={project.analysisMd} />
           ) : (
             <p className="text-sm text-muted-foreground">暂无分析</p>
+          )}
+
+          {project.wechatMd && (
+            <>
+              <Separator className="my-4" />
+              <div>
+                <button
+                  onClick={() => setWechatExpanded(!wechatExpanded)}
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  {wechatExpanded ? (
+                    <ChevronDown className="size-4" />
+                  ) : (
+                    <ChevronRight className="size-4" />
+                  )}
+                  公众号文章
+                  <CopyButton text={project.wechatMd} />
+                </button>
+                {wechatExpanded && (
+                  <div className="mt-3 p-4 bg-muted/50 rounded-lg">
+                    <MarkdownViewer content={project.wechatMd} />
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}

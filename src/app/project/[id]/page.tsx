@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 export const dynamic = "force-dynamic";
 import { MarkdownViewer } from "@/components/MarkdownViewer";
 import { StarTrendChart } from "@/components/StarTrendChart";
+import { WechatMdSection } from "@/components/WechatMdSection";
 
 export default async function ProjectDetailPage({
   params,
@@ -59,7 +60,7 @@ export default async function ProjectDetailPage({
           <CardHeader className="pb-2">
             <h2 className="text-lg font-semibold">Star 增长趋势</h2>
             <p className="text-sm text-muted-foreground">
-              当前 {project.stars.toLocaleString()} stars
+              当前 {project.stars.toLocaleString()} stars · {project.forks.toLocaleString()} forks
             </p>
           </CardHeader>
           <CardContent>
@@ -76,6 +77,8 @@ export default async function ProjectDetailPage({
             )}
           </CardContent>
         </Card>
+
+        {project.wechatMd && <WechatMdSection content={project.wechatMd} />}
 
         <div className="mt-6 text-center">
           <a

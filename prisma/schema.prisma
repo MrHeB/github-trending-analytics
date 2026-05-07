@@ -9,10 +9,12 @@ datasource db {
 
 model DailyReport {
   id        Int       @id @default(autoincrement())
-  date      DateTime  @unique @db.Date
+  date      DateTime  @db.Date
+  category  String    @default("stars")
   projects  Project[]
   createdAt DateTime  @default(now())
 
+  @@unique([date, category])
   @@map("daily_reports")
 }
 
@@ -20,26 +22,29 @@ model Project {
   id           Int          @id @default(autoincrement())
   name         String
   owner        String
-  fullName     String       @unique
+  fullName     String
   githubUrl    String
   description  String?
   language     String?
   stars        Int          @default(0)
+  forks        Int          @default(0)
+  openIssues   Int          @default(0)
   starsGrowth  Int          @default(0)
   rank         Int
   topics       String[]     @default([])
   analysisMd   String?
-  report       DailyReport  @relation(fields: [reportDate], references: [date])
-  reportDate   DateTime     @db.Date
+  wechatMd     String?
+  report       DailyReport  @relation(fields: [reportId], references: [id])
+  reportId     Int
   createdAt    DateTime     @default(now())
 
   @@map("projects")
 }
 
 model StarSnapshot {
-  id          Int      @id @default(autoincrement())
-  fullName    String
-  stars       Int
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  stars        Int
   snapshotDate DateTime @db.Date
 
   @@unique([fullName, snapshotDate])

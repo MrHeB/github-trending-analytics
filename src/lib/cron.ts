@@ -1,24 +1,27 @@
 import { fetchTopTrendingRepos, getRepoReadme } from "./github";
 import { analyzeProject } from "./deepseek";
 import { prisma } from "./db";
+import type { TrendingCategory } from "@/types";
 
-export async function runDailyTask(): Promise<void> {
-  console.log("[Cron] 开始执行每日 GitHub 趋势分析任务...");
+export async function runDailyTask(category: TrendingCategory = "stars"): Promise<void> {
+  console.log(`[Cron] 开始执行每日 GitHub 趋势分析任务（${category}）...`);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const existing = await prisma.dailyReport.findUnique({ where: { date: today } });
+  const existing = await prisma.dailyReport.findUnique({
+    where: { date_category: { date: today, category } },
+  });
   if (existing) {
-    console.log("[Cron] 今日报告已存在，跳过");
+    console.log(`[Cron] 今日 ${category} 报告已存在，跳过`);
     return;
   }
 
-  const repos = await fetchTopTrendingRepos();
-  console.log(`[Cron] 获取到 ${repos.length} 个热门项目`);
+  const repos = await fetchTopTrendingRepos(category);
+  console.log(`[Cron] 获取到 ${repos.length} 个热门项目（${category}）`);
 
   const report = await prisma.dailyReport.create({
-    data: { date: today },
+    data: { date: today, category },
   });
 
   for (let i = 0; i < repos.length; i++) {
@@ -33,18 +36,24 @@ export async function runDailyTask(): Promise<void> {
     }
 
     let analysisMd = "";
+    let wechatMd: string | null = null;
     try {
-      analysisMd = await analyzeProject({
+      const result = await analyzeProject({
         name: repo.name,
         owner: repo.owner,
         fullName: repo.fullName,
         description: repo.description,
         language: repo.language,
         stars: repo.stars,
+        forks: repo.forks,
+        openIssues: repo.openIssues,
         starsGrowth: repo.starsGrowth,
         topics: repo.topics,
+        category,
         readme,
       });
+      analysisMd = result.analysisMd;
+      wechatMd = result.wechatMd;
     } catch (err) {
       console.error(`[Cron] 分析失败 ${repo.fullName}:`, err);
       analysisMd = `# ${repo.fullName}\n\n> AI 分析暂时不可用\n\n## 原始地址\n[${repo.fullName}](${repo.url})`;
@@ -59,11 +68,14 @@ export async function runDailyTask(): Promise<void> {
         description: repo.description,
         language: repo.language,
         stars: repo.stars,
+        forks: repo.forks,
+        openIssues: repo.openIssues,
         starsGrowth: repo.starsGrowth,
         rank: i + 1,
         topics: repo.topics,
         analysisMd,
-        reportDate: report.date,
+        wechatMd,
+        reportId: report.id,
       },
     });
 
@@ -72,5 +84,5 @@ export async function runDailyTask(): Promise<void> {
     }
   }
 
-  console.log(`[Cron] 每日报告生成完成，共 ${repos.length} 个项目`);
+  console.log(`[Cron] 每日 ${category} 报告生成完成，共 ${repos.length} 个项目`);
 }

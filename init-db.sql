@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS "daily_reports" (
     "id" SERIAL PRIMARY KEY,
     "date" DATE NOT NULL,
+    "category" TEXT NOT NULL DEFAULT 'stars',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "daily_reports_date_key" UNIQUE ("date")
+    CONSTRAINT "daily_reports_date_category_key" UNIQUE ("date", "category")
 );
 
 CREATE TABLE IF NOT EXISTS "projects" (
@@ -14,13 +15,15 @@ CREATE TABLE IF NOT EXISTS "projects" (
     "description" TEXT,
     "language" TEXT,
     "stars" INTEGER NOT NULL DEFAULT 0,
+    "forks" INTEGER NOT NULL DEFAULT 0,
+    "openIssues" INTEGER NOT NULL DEFAULT 0,
     "starsGrowth" INTEGER NOT NULL DEFAULT 0,
     "rank" INTEGER NOT NULL,
     "topics" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "analysisMd" TEXT,
-    "reportDate" DATE NOT NULL REFERENCES "daily_reports"("date"),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "projects_fullName_key" UNIQUE ("fullName")
+    "wechatMd" TEXT,
+    "reportId" INTEGER NOT NULL REFERENCES "daily_reports"("id"),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "star_snapshots" (
